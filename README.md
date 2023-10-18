@@ -1,1 +1,1 @@
-# LetMeOut_IndieHorror
+# Let Me Out (Indie Horror Game)
