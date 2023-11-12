@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using UniRx;
+using System.Linq;
 using UnityEngine;
 
-namespace Inventory
+namespace Inventory.UI
 {
     public class InventoryDialog : Dialog
     {
@@ -16,18 +15,31 @@ namespace Inventory
             Locator.Instance.CameraController.AddOverlayCameraToStack(_itemInspectionCamera);
             var currentItems = Locator.Instance.InventoryController.Data.CurrentItems;
 
+            
             for (int i = 0; i < _itemCells.Count; i++)
             {
-                if (i<currentItems.Count)
+                if (i<currentItems.Length)
                 {
-                    _itemCells[i].Init(Locator.Instance.InteractableItemsConfig.GetItemData(currentItems[i]));
-                }
-                else
-                {
-                    _itemCells[i].Init();
+                    var existingItemType = currentItems[i];
+                    if (existingItemType!=InteractableItemType.NONE)
+                    {
+                        _itemCells[i].Initialize(i,Locator.Instance.InteractableItemsConfig.GetItemData(existingItemType));
+                        continue;
+                    }
+                    _itemCells[i].Initialize(i);
                 }
             }
-            _itemCells[0].SelectCell();
+
+            var firstCell = _itemCells.FirstOrDefault(x => x.IsEmpty == false);
+            if (firstCell)
+            {
+                firstCell.SelectCell();
+            }
+            else
+            {
+                _itemCells[0].SelectCell();
+            }
+
         }
 
         private void OnEnable()

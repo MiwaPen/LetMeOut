@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inventory
+namespace Inventory.UI
 {
     public class UiItemInspector : MonoBehaviour
     {
@@ -28,6 +28,7 @@ namespace Inventory
         {
             if (_currentInspectedItem!=null)
             {
+                itemRotator.Clear();
                 Destroy(_currentInspectedItem);
             }
         }

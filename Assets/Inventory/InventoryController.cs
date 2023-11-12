@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Inventory;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -22,16 +23,39 @@ public class InventoryController : MonoBehaviour
     {
         if (_data.CurrentItems.Contains(itemType)==false) //prevent duplicates for now??
         {
-            _data.CurrentItems.Add(itemType);
+            int emptyIndex = Array.IndexOf(_data.CurrentItems, InteractableItemType.NONE); 
+
+            if (emptyIndex != -1)  
+            {
+                _data.CurrentItems[emptyIndex] = itemType; 
+            }
+            else
+            {
+                //inventory is full
+            }
             SaveData();
         }
+    }
+
+    public void SwapItemsIndexes(int indexA, int indexB)
+    {
+        
+        if (_data.CurrentItems.Length <= indexA || _data.CurrentItems.Length <= indexB)
+        {
+            Debug.LogError("One item in swap items are incorrect!");
+            return;
+        }
+        (_data.CurrentItems[indexA], _data.CurrentItems[indexB]) = (_data.CurrentItems[indexB], _data.CurrentItems[indexA]);
+        SaveData();
     }
 
     public void RemoveItemFromInventory(InteractableItemType itemType)
     {
         if (_data.CurrentItems.Contains(itemType))
         {
-            _data.CurrentItems.Remove(itemType);
+            int targetIndex = Array.IndexOf(_data.CurrentItems, itemType);
+            _data.CurrentItems[targetIndex] = InteractableItemType.NONE;
+            
             SaveData();
         }
     }
@@ -58,6 +82,12 @@ public class InventoryController : MonoBehaviour
     [Serializable]
     public class InventoryData
     {
-        public List<InteractableItemType> CurrentItems = new();
+        public InteractableItemType[] CurrentItems;
+
+        public InventoryData()
+        {
+            CurrentItems = new InteractableItemType[9];
+            Array.Fill(CurrentItems, InteractableItemType.NONE);
+        }
     }
 }
