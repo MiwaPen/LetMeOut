@@ -118,9 +118,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5ce562aa1bb3b940bee6a12d48b3fad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interactableItemType: 1
+  _interactableItemType: 2
   _data:
-    InteractableItemType: 1
-    Name: CubeC
-    Icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-    Prefab: {fileID: 5807557655788913709, guid: fd06fa4175e1fe348b0e67c93c9cf890, type: 3}
+    <InteractableItemType>k__BackingField: 2
+    <Name>k__BackingField: SPHERIC
+    <Icon>k__BackingField: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    <Prefab>k__BackingField: {fileID: 3223982070211693661}

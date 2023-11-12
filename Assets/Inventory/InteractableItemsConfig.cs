@@ -19,9 +19,9 @@ namespace Inventory
     [Serializable]
     public class ItemData
     {
-        public InteractableItemType InteractableItemType;
-        public string Name;
-        public Sprite Icon;
-        public GameObject Prefab;
+        [field: SerializeField] public InteractableItemType InteractableItemType { get; private set; }
+        [field: SerializeField] public string Name { get; private set; }
+        [field: SerializeField] public Sprite Icon { get; private set; }
+        [field: SerializeField] public GameObject Prefab { get; private set; }
     }
 }

@@ -1,7 +1,4 @@
-using System;
-using System.Linq;
 using Sirenix.OdinInspector;
-using Sirenix.Utilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -37,12 +34,12 @@ namespace Inventory
             }
         }
 #endif
-
-
+        
         [Button]
         private void GetItemInInventory()
         {
-            
+            Locator.Instance.InventoryController.AddItemToInventory(_interactableItemType);
+            Destroy(gameObject);
         }
     }
 }

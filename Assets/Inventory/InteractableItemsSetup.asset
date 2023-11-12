@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: InteractableItemsSetup
   m_EditorClassIdentifier: 
   _itemsDatas:
-  - InteractableItemType: 1
-    Name: CubeC
-    Icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-    Prefab: {fileID: 5807557655788913709, guid: fd06fa4175e1fe348b0e67c93c9cf890, type: 3}
-  - InteractableItemType: 2
-    Name: SphereS
-    Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-    Prefab: {fileID: 3223982070211693661, guid: 091cd1af419b13344a250b7ecb06efbd, type: 3}
+  - <InteractableItemType>k__BackingField: 1
+    <Name>k__BackingField: CUBIC
+    <Icon>k__BackingField: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+    <Prefab>k__BackingField: {fileID: 5807557655788913709, guid: fd06fa4175e1fe348b0e67c93c9cf890, type: 3}
+  - <InteractableItemType>k__BackingField: 2
+    <Name>k__BackingField: SPHERIC
+    <Icon>k__BackingField: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    <Prefab>k__BackingField: {fileID: 3223982070211693661, guid: 091cd1af419b13344a250b7ecb06efbd, type: 3}

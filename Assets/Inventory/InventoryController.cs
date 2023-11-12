@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Inventory;
@@ -8,26 +7,35 @@ using UnityEngine;
 
 public class InventoryController : MonoBehaviour
 {
-    public static InventoryController Instance;
-    
     private const string CURRENT_ITEMS_PATH = "Assets/" + "InventoryInfo.json";
     
-    [SerializeField] private InteractableItemsConfig _config;
-    [SerializeField] private InventoryData _data;
-    
+    [SerializeField, ReadOnly] private InventoryData _data;
+    public InventoryData Data => _data;
     
     private void Awake()
     {
-        if (Instance!=null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
         GetData();
+        _data ??= new InventoryData();
     }
 
+    public void AddItemToInventory(InteractableItemType itemType)
+    {
+        if (_data.CurrentItems.Contains(itemType)==false) //prevent duplicates for now??
+        {
+            _data.CurrentItems.Add(itemType);
+            SaveData();
+        }
+    }
+
+    public void RemoveItemFromInventory(InteractableItemType itemType)
+    {
+        if (_data.CurrentItems.Contains(itemType))
+        {
+            _data.CurrentItems.Remove(itemType);
+            SaveData();
+        }
+    }
+    
     [Button]
     private void SaveData()
     { 
@@ -41,9 +49,15 @@ public class InventoryController : MonoBehaviour
         _data = JsonUtility.FromJson<InventoryData>(data);
     }
 
+    [Button]
+    private void ClearData()
+    {
+        File.WriteAllText(CURRENT_ITEMS_PATH, string.Empty);
+    }
+
     [Serializable]
     public class InventoryData
     {
-        public List<InteractableItemType> CurrentItems;
+        public List<InteractableItemType> CurrentItems = new();
     }
 }
