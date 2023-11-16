@@ -3,7 +3,7 @@ using Main.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Main.Player
+namespace Main.Player.Scripts
 {
     public class PlayerInputHandler : MonoBehaviour
     {
@@ -48,6 +48,10 @@ namespace Main.Player
         private void CastJumpEvent(InputAction.CallbackContext value)
             => OnActionCast?.Invoke(InputActionEventType.JUMP);
 
+        private void CastInventoryEvent(InputAction.CallbackContext value)
+            => OnActionCast?.Invoke(InputActionEventType.INVENTORY);
+        
+
         private void SubscribeOnInput()
         {
             _input.Player.Movement.performed += OnMovementPerformed;
@@ -61,6 +65,7 @@ namespace Main.Player
             _input.Player.MouseRightButtonClick.started += CastRClickEvent;
             _input.Player.Jump.started += CastJumpEvent;
             _input.Player.Crouch.started += CastCrouchEvent;
+            _input.Player.Inventory.started += CastInventoryEvent;
         }
 
         private void UnsubscribeOnInput()
@@ -76,6 +81,7 @@ namespace Main.Player
             _input.Player.MouseRightButtonClick.started -= CastRClickEvent;
             _input.Player.Jump.started -= CastJumpEvent;
             _input.Player.Crouch.started -= CastCrouchEvent;
+            _input.Player.Inventory.started -= CastInventoryEvent;
         }
 
         private void OnEnable()

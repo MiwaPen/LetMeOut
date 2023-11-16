@@ -7,6 +7,7 @@ namespace Main.Input
         LEFT_CLICK,
         RIGHT_CLICK,
         JUMP,
-        CROUCH
+        CROUCH,
+        INVENTORY
     }
 }
