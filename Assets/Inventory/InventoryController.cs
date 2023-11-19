@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Inventory;
@@ -9,6 +8,9 @@ using UnityEngine;
 public class InventoryController : MonoBehaviour
 {
     private const string CURRENT_ITEMS_PATH = "Assets/" + "InventoryInfo.json";
+
+    public event Action<InteractableItemType> OnItemAdded;
+    public event Action<InteractableItemType> OnItemRemoved;
     
     [SerializeField, ReadOnly] private InventoryData _data;
     public InventoryData Data => _data;
@@ -28,6 +30,7 @@ public class InventoryController : MonoBehaviour
             if (emptyIndex != -1)  
             {
                 _data.CurrentItems[emptyIndex] = itemType; 
+                OnItemAdded?.Invoke(itemType);
             }
             else
             {
@@ -55,7 +58,8 @@ public class InventoryController : MonoBehaviour
         {
             int targetIndex = Array.IndexOf(_data.CurrentItems, itemType);
             _data.CurrentItems[targetIndex] = InteractableItemType.NONE;
-            
+            OnItemRemoved?.Invoke(itemType);
+
             SaveData();
         }
     }

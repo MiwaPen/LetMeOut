@@ -1,20 +1,51 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Inventory.Enums;
 using UnityEngine;
 
 namespace Inventory.UI
 {
     public class InventoryDialog : Dialog
     {
+        public event Action <ItemCell> OnSelectedCellChanged;
+        
         [SerializeField] private Camera _itemInspectionCamera;
         [SerializeField] private List<ItemCell> _itemCells;
         [SerializeField] private UiItemInspector _uiItemInspector;
+        [SerializeField] private ItemControlButtonsController _itemControlButtonsController;
+        private ItemCell _currentSelectedCell;
+        private InventoryDialogMode _mode;
         
-        private void Start()
+        public Dialog Initialize(InventoryDialogMode mode)
         {
+            _mode = mode;
+            ItemCell.OnCellClicked += SelectCell;
+            
+            Locator.Instance.InventoryController.OnItemRemoved += OnInventoryChanged;
+            Locator.Instance.InventoryController.OnItemAdded += OnInventoryChanged;
+            
+            _itemControlButtonsController.Initialize(_mode);
             Locator.Instance.CameraController.AddOverlayCameraToStack(_itemInspectionCamera);
-            var currentItems = Locator.Instance.InventoryController.Data.CurrentItems;
 
+            SetupCells();
+            
+            var firstCell = _itemCells.FirstOrDefault(x => x.IsEmpty == false);
+            SelectCell(firstCell? firstCell : _itemCells[0]);
+
+            return this;
+        }
+        
+        private void OnDisable()
+        {
+            ItemCell.OnCellClicked -= SelectCell;
+            Locator.Instance.InventoryController.OnItemRemoved -= OnInventoryChanged;
+            Locator.Instance.InventoryController.OnItemAdded -= OnInventoryChanged;
+        }
+
+        private void SetupCells()
+        {
+            var currentItems = Locator.Instance.InventoryController.Data.CurrentItems;
             
             for (int i = 0; i < _itemCells.Count; i++)
             {
@@ -23,40 +54,37 @@ namespace Inventory.UI
                     var existingItemType = currentItems[i];
                     if (existingItemType!=InteractableItemType.NONE)
                     {
-                        _itemCells[i].Initialize(i,Locator.Instance.InteractableItemsConfig.GetItemData(existingItemType));
+                        _itemCells[i].Initialize(this,i,Locator.Instance.InteractableItemsConfig.GetItemData(existingItemType)); //not empty cell
                         continue;
                     }
-                    _itemCells[i].Initialize(i);
+                    _itemCells[i].Initialize(this,i); //empty cell
                 }
             }
+        }
 
-            var firstCell = _itemCells.FirstOrDefault(x => x.IsEmpty == false);
-            if (firstCell)
+        private void OnInventoryChanged(InteractableItemType itemType)
+        {
+            SetupCells();
+            RefreshInspectorView();
+            _itemControlButtonsController.SetCellView(_currentSelectedCell);
+        }
+
+        private void SelectCell(ItemCell itemCell)
+        {
+            if (_currentSelectedCell != itemCell)
             {
-                firstCell.SelectCell();
+                _currentSelectedCell = itemCell;
+                OnSelectedCellChanged?.Invoke(itemCell);
+                RefreshInspectorView();
+                _itemControlButtonsController.SetCellView(_currentSelectedCell);
             }
-            else
+        }
+
+        private void RefreshInspectorView()
+        {
+            if (_currentSelectedCell.IsEmpty==false)
             {
-                _itemCells[0].SelectCell();
-            }
-
-        }
-
-        private void OnEnable()
-        {
-            ItemCell.OnSelectedCellChanged += OnSelectedCellChanged;
-        }
-
-        private void OnDisable()
-        {
-            ItemCell.OnSelectedCellChanged -= OnSelectedCellChanged;
-        }
-
-        private void OnSelectedCellChanged(ItemCell itemCell)
-        {
-            if (itemCell.IsEmpty==false)
-            {
-                _uiItemInspector.SetItemToInspect(itemCell.ItemData.Prefab);
+                _uiItemInspector.SetItemToInspect(_currentSelectedCell.ItemData.Prefab);
             }
             else
             {
@@ -64,7 +92,6 @@ namespace Inventory.UI
             }
         }
         
-
         public override void Hide()
         {
             Locator.Instance.CameraController.RemoveOverlayCameraFromStack(_itemInspectionCamera);

@@ -7,30 +7,49 @@ namespace Inventory.UI
 {
     public class ItemCell : MonoBehaviour, IPointerClickHandler, IDropHandler
     {
-        public static event Action<ItemCell> OnSelectedCellChanged;
-        private static ItemCell SelectedItemCell;
+        public static event Action<ItemCell> OnCellClicked;
         
         public ItemData ItemData { get; private set; }
         public bool IsEmpty => ItemData == null;
-        public int IndexInCells { get; private set; }
 
         [SerializeField] private ItemView _itemView;
         [SerializeField] private Transform _itemViewParent;
         [SerializeField] private Image _selectionBorder;
+        private InventoryDialog _inventoryDialog;
+        private int _indexInCells;
 
-        public void Initialize(int indexInCells, ItemData itemData=null)
+        public void Initialize(InventoryDialog inventoryDialog, int indexInCells, ItemData itemData=null)
         {
-            IndexInCells = indexInCells;
+            _inventoryDialog = inventoryDialog;
+            _inventoryDialog.OnSelectedCellChanged += RefreshView;
+            _indexInCells = indexInCells;
             SetItemData(itemData);
+        }
+
+        private void OnDisable()
+        {
+            _inventoryDialog.OnSelectedCellChanged -= RefreshView;
+        }
+        
+        private void RefreshView(ItemCell selectedCell)
+        {
+            if (selectedCell==this)
+            {
+                _selectionBorder.color = Color.white;
+            }
+            else
+            {
+                _selectionBorder.color = Color.black;
+            }
         }
         
         private void SetItemData(ItemData itemData = null)
         {
             ItemData = itemData;
-            UpdateView();
+            RefreshItemView();
         }
 
-        private void UpdateView()
+        private void RefreshItemView()
         {
             if (ItemData==null)
             {
@@ -51,40 +70,9 @@ namespace Inventory.UI
             SetItemData(itemData);
         }
 
-        private void OnEnable()
-        {
-            OnSelectedCellChanged += OnSelectedCell;
-        }
-
-        private void OnDisable()
-        {
-            OnSelectedCellChanged -= OnSelectedCell;
-        }
-
         public void OnPointerClick(PointerEventData eventData)
         {
-            SelectCell();
-        }
-
-        public void SelectCell()
-        {
-            if (SelectedItemCell!=this)
-            {
-                SelectedItemCell = this;
-                OnSelectedCellChanged?.Invoke(this);
-            }
-        }
-
-        private void OnSelectedCell(ItemCell selectedCell)
-        {
-            if (selectedCell==this)
-            {
-                _selectionBorder.color = Color.white;
-            }
-            else
-            {
-                _selectionBorder.color = Color.black;
-            }
+            OnCellClicked?.Invoke(this);
         }
 
         public void OnDrop(PointerEventData eventData)
@@ -92,13 +80,13 @@ namespace Inventory.UI
             if (eventData.pointerDrag!=null && eventData.pointerDrag != _itemView.gameObject)
             {
                 SwapItemDatas(eventData.pointerDrag.GetComponent<ItemView>().ItemCell, this);
-                SelectCell();
+                OnCellClicked?.Invoke(this);
             }
         }
 
         private void SwapItemDatas(ItemCell cellA, ItemCell cellB)
         {
-            Locator.Instance.InventoryController.SwapItemsIndexes(cellA.IndexInCells, cellB.IndexInCells);
+            Locator.Instance.InventoryController.SwapItemsIndexes(cellA._indexInCells, cellB._indexInCells);
 
             var cellAView = cellA._itemView;
             var cellAData = cellA.ItemData;

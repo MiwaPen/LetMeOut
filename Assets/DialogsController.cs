@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inventory;
+using Inventory.Enums;
 using Inventory.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -39,6 +40,16 @@ public class DialogsController : MonoBehaviour
         {
             return;
         }
-        _activeDialogs.Push(Instantiate(_inventoryDialog, transform));
+        _activeDialogs.Push(Instantiate(_inventoryDialog, transform).Initialize(InventoryDialogMode.DEFAULT));
+    }
+    
+    [Button]
+    private void ShowInventoryDialogInteract()
+    {
+        if (_activeDialogs.FirstOrDefault(x=>x.GetType()==typeof(InventoryDialog)))
+        {
+            return;
+        }
+        _activeDialogs.Push(Instantiate(_inventoryDialog, transform).Initialize(InventoryDialogMode.INTERACTION));
     }
 }
