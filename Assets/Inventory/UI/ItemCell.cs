@@ -15,20 +15,20 @@ namespace Inventory.UI
         [SerializeField] private ItemView _itemView;
         [SerializeField] private Transform _itemViewParent;
         [SerializeField] private Image _selectionBorder;
-        private InventoryDialog _inventoryDialog;
+        private ItemCellsController _itemCellsController;
         private int _indexInCells;
 
-        public void Initialize(InventoryDialog inventoryDialog, int indexInCells, ItemData itemData=null)
+        public void Initialize(ItemCellsController itemCellsController, int indexInCells, ItemData itemData=null)
         {
-            _inventoryDialog = inventoryDialog;
-            _inventoryDialog.OnSelectedCellChanged += RefreshView;
+            _itemCellsController = itemCellsController;
+            _itemCellsController.OnSelectedCellChanged += RefreshView;
             _indexInCells = indexInCells;
             SetItemData(itemData);
         }
 
         private void OnDisable()
         {
-            _inventoryDialog.OnSelectedCellChanged -= RefreshView;
+            _itemCellsController.OnSelectedCellChanged -= RefreshView;
         }
         
         private void RefreshView(ItemCell selectedCell)

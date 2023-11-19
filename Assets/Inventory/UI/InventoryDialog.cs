@@ -8,83 +8,53 @@ namespace Inventory.UI
 {
     public class InventoryDialog : Dialog
     {
-        public event Action <ItemCell> OnSelectedCellChanged;
-        
         [SerializeField] private Camera _itemInspectionCamera;
-        [SerializeField] private List<ItemCell> _itemCells;
         [SerializeField] private UiItemInspector _uiItemInspector;
+        [SerializeField] private ItemCellsController _itemCellsController;
         [SerializeField] private ItemControlButtonsController _itemControlButtonsController;
-        private ItemCell _currentSelectedCell;
         private InventoryDialogMode _mode;
         
         public Dialog Initialize(InventoryDialogMode mode)
         {
             _mode = mode;
-            ItemCell.OnCellClicked += SelectCell;
             
+            _itemCellsController.Initialize();
+            _itemControlButtonsController.Initialize(_mode);
+            _itemControlButtonsController.SetCellView(_itemCellsController.CurrentSelectedCell);
+            
+            _itemCellsController.OnSelectedCellChanged += OnSelectedCellChanged;
             Locator.Instance.InventoryController.OnItemRemoved += OnInventoryChanged;
             Locator.Instance.InventoryController.OnItemAdded += OnInventoryChanged;
             
-            _itemControlButtonsController.Initialize(_mode);
             Locator.Instance.CameraController.AddOverlayCameraToStack(_itemInspectionCamera);
-
-            SetupCells();
-            
-            var firstCell = _itemCells.FirstOrDefault(x => x.IsEmpty == false);
-            SelectCell(firstCell? firstCell : _itemCells[0]);
-
             return this;
         }
         
         private void OnDisable()
         {
-            ItemCell.OnCellClicked -= SelectCell;
+            _itemCellsController.OnSelectedCellChanged -= OnSelectedCellChanged;
             Locator.Instance.InventoryController.OnItemRemoved -= OnInventoryChanged;
             Locator.Instance.InventoryController.OnItemAdded -= OnInventoryChanged;
         }
-
-        private void SetupCells()
-        {
-            var currentItems = Locator.Instance.InventoryController.Data.CurrentItems;
-            
-            for (int i = 0; i < _itemCells.Count; i++)
-            {
-                if (i<currentItems.Length)
-                {
-                    var existingItemType = currentItems[i];
-                    if (existingItemType!=InteractableItemType.NONE)
-                    {
-                        _itemCells[i].Initialize(this,i,Locator.Instance.InteractableItemsConfig.GetItemData(existingItemType)); //not empty cell
-                        continue;
-                    }
-                    _itemCells[i].Initialize(this,i); //empty cell
-                }
-            }
-        }
-
+        
         private void OnInventoryChanged(InteractableItemType itemType)
         {
-            SetupCells();
+            _itemCellsController.SetupCells();
             RefreshInspectorView();
-            _itemControlButtonsController.SetCellView(_currentSelectedCell);
+            _itemControlButtonsController.SetCellView(_itemCellsController.CurrentSelectedCell);
         }
 
-        private void SelectCell(ItemCell itemCell)
+        private void OnSelectedCellChanged(ItemCell itemCell)
         {
-            if (_currentSelectedCell != itemCell)
-            {
-                _currentSelectedCell = itemCell;
-                OnSelectedCellChanged?.Invoke(itemCell);
-                RefreshInspectorView();
-                _itemControlButtonsController.SetCellView(_currentSelectedCell);
-            }
+            RefreshInspectorView();
+            _itemControlButtonsController.SetCellView(_itemCellsController.CurrentSelectedCell);
         }
 
         private void RefreshInspectorView()
         {
-            if (_currentSelectedCell.IsEmpty==false)
+            if (_itemCellsController.CurrentSelectedCell.IsEmpty==false)
             {
-                _uiItemInspector.SetItemToInspect(_currentSelectedCell.ItemData.Prefab);
+                _uiItemInspector.SetItemToInspect(_itemCellsController.CurrentSelectedCell.ItemData.Prefab);
             }
             else
             {
