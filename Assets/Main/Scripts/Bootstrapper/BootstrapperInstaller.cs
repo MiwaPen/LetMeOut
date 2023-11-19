@@ -10,7 +10,7 @@ namespace LetMeOut.Bootstrapper
 
         public override void InstallBindings()
         {
-            Container.Bind<ILog>().FromInstance(new UnityLogger());
+            BindLogService();
         }
 
         private void Awake()
@@ -19,6 +19,11 @@ namespace LetMeOut.Bootstrapper
             {
                 SceneManager.LoadScene(SCENE_NAME, LoadSceneMode.Additive);
             }
+        }
+
+        private void BindLogService()
+        {
+            Container.Bind<ILogService>().FromInstance(new UnityLogger());
         }
     }
 }

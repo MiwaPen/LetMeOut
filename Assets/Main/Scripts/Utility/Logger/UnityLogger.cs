@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LetMeOut.Utility.Logs
 {
-    public class UnityLogger : ILog
+    public class UnityLogger : ILogService
     {
         private const string DEFAULT_TAG_NAME = "[LMO] ";
         private const string WARN_TAG_NAME = "[LMO-WARN] ";

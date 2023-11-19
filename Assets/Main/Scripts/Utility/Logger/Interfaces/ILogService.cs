@@ -1,6 +1,6 @@
 namespace LetMeOut.Utility.Logs
 {
-    public interface ILog
+    public interface ILogService
     {
         void Message(string message);
         void Warn(string message);
