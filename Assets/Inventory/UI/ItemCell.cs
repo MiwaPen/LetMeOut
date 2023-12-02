@@ -10,25 +10,26 @@ namespace Inventory.UI
         public static event Action<ItemCell> OnCellClicked;
         
         public ItemData ItemData { get; private set; }
+        public ItemCellsController ItemCellsController { get; private set; }
+
         public bool IsEmpty => ItemData == null;
 
         [SerializeField] private ItemView _itemView;
         [SerializeField] private Transform _itemViewParent;
         [SerializeField] private Image _selectionBorder;
-        private ItemCellsController _itemCellsController;
         private int _indexInCells;
 
         public void Initialize(ItemCellsController itemCellsController, int indexInCells, ItemData itemData=null)
         {
-            _itemCellsController = itemCellsController;
-            _itemCellsController.OnSelectedCellChanged += RefreshView;
+            ItemCellsController = itemCellsController;
+            ItemCellsController.OnSelectedCellChanged += RefreshView;
             _indexInCells = indexInCells;
             SetItemData(itemData);
         }
 
         private void OnDisable()
         {
-            _itemCellsController.OnSelectedCellChanged -= RefreshView;
+            ItemCellsController.OnSelectedCellChanged -= RefreshView;
         }
         
         private void RefreshView(ItemCell selectedCell)

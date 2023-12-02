@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Inventory.Enums;
 using UnityEngine;
 
@@ -18,11 +15,12 @@ namespace Inventory.UI
         {
             _mode = mode;
             
+            _itemCellsController.OnSelectedCellChanged += OnSelectedCellChanged;
+
             _itemCellsController.Initialize();
             _itemControlButtonsController.Initialize(_mode);
             _itemControlButtonsController.SetCellView(_itemCellsController.CurrentSelectedCell);
             
-            _itemCellsController.OnSelectedCellChanged += OnSelectedCellChanged;
             Locator.Instance.InventoryController.OnItemRemoved += OnInventoryChanged;
             Locator.Instance.InventoryController.OnItemAdded += OnInventoryChanged;
             

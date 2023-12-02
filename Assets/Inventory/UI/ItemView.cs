@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -42,20 +40,39 @@ namespace Inventory.UI
 
         public void OnDrag(PointerEventData eventData)
         {
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(_selfRectTr.parent as RectTransform, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
-            _selfRectTr.localPosition = localPoint;
+            if (_icon.raycastTarget)
+            {
+                return;
+            }
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(ItemCell.ItemCellsController.CellsBounds, 
+                eventData.position, eventData.pressEventCamera, out Vector2 boundsPoint);
+            
+            if (ItemCell.ItemCellsController.CellsBounds.rect.Contains(boundsPoint))
+            {
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(_selfRectTr.parent as RectTransform, 
+                    eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+                _selfRectTr.localPosition = localPoint;
+            }
+            else
+            {
+                OnEndDrag(null);
+            }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             _layoutElement.ignoreLayout = true;
-            _icon.raycastTarget = false;
             transform.SetParent(_draggingParent);
             transform.SetAsLastSibling();
+            _icon.raycastTarget = false;
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (_icon.raycastTarget)
+            {
+                return;
+            }
             transform.SetParent(_defaultParent);
             
             _layoutElement.ignoreLayout = false;

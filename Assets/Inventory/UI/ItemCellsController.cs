@@ -10,6 +10,8 @@ namespace Inventory.UI
         public event Action <ItemCell> OnSelectedCellChanged;
         public ItemCell CurrentSelectedCell { get; private set; }
 
+        [field: SerializeField] public RectTransform CellsBounds { get;private set; }
+
         [SerializeField] private List<ItemCell> _itemCells;
 
         public void Initialize()
