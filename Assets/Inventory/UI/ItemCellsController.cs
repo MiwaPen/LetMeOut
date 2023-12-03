@@ -56,7 +56,10 @@ namespace Inventory.UI
 
         private void OnValidate()
         {
-            _itemCells = GetComponentsInChildren<ItemCell>().ToList();
+            if (_itemCells==null || _itemCells.Count != transform.childCount)
+            {
+                _itemCells = GetComponentsInChildren<ItemCell>().ToList();
+            }
         }
 
 #endif

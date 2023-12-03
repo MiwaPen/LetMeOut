@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Inventory.Enums;
+using TabsMenu.Enums;
 using UnityEngine;
 
 namespace Inventory.UI
@@ -8,9 +8,9 @@ namespace Inventory.UI
     {
         [SerializeField] private List<ItemControlButton> _itemControlButtons;
         private ItemCell _currentCell;
-        private InventoryDialogMode _mode;
+        private TabsMenuScreenMode _mode;
         
-        public void Initialize(InventoryDialogMode mode)
+        public void Initialize(TabsMenuScreenMode mode)
         {
             _mode = mode;
             _itemControlButtons.ForEach(x=>x.Hide());
@@ -28,10 +28,10 @@ namespace Inventory.UI
             
             switch (_mode)
             {
-                case InventoryDialogMode.DEFAULT:
+                case TabsMenuScreenMode.DEFAULT:
                     SetDefaultView();
                     break;
-                case InventoryDialogMode.INTERACTION:
+                case TabsMenuScreenMode.ITEM_INTERACTION:
                     SetInteractionView();
                     break;
             }

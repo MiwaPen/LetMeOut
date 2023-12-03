@@ -4,8 +4,6 @@ namespace Inventory.UI
 {
     public class UiItemInspector : MonoBehaviour
     {
-        private const string UiItemInspectionLayer = "UiInspectionedItem";
-        
         [SerializeField] private InteractionItemRotator itemRotator;
         [SerializeField] private RectTransform _itemBoundsRt;
         [SerializeField] private RectTransform _itemParent;
@@ -18,7 +16,7 @@ namespace Inventory.UI
                 Destroy(_currentInspectedItem);
             }
             _currentInspectedItem = Instantiate(target, _itemParent, true);
-            _currentInspectedItem.layer = LayerMask.NameToLayer(UiItemInspectionLayer);
+            _currentInspectedItem.layer = gameObject.layer;
             FitObject(_currentInspectedItem);
             _currentInspectedItem.transform.localPosition = Vector3.zero;
             itemRotator.SetTarget(_currentInspectedItem);

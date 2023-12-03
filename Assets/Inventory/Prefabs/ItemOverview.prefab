@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2967929511858319955}
   - component: {fileID: 5509388048505754966}
   - component: {fileID: 5822643075176938342}
-  m_Layer: 10
+  m_Layer: 15
   m_Name: ItemInspector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,6 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rotatingSpeed: 18
   _stopWhenOffBounds: 1
+  _defaultRotationAngles: {x: -20, y: 45, z: -18}
 --- !u!65 &5822643075176938342
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -84,7 +85,7 @@ GameObject:
   - component: {fileID: 5987531828251489537}
   - component: {fileID: 6558533051723672145}
   - component: {fileID: 4016420767512700131}
-  m_Layer: 10
+  m_Layer: 15
   m_Name: Description
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +220,7 @@ GameObject:
   - component: {fileID: 8006499308604381331}
   - component: {fileID: 4176885435935875555}
   - component: {fileID: 3177214159241666624}
-  m_Layer: 10
+  m_Layer: 15
   m_Name: ItemOverview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.59607846, g: 0.59607846, b: 0.59607846, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -309,7 +310,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8424352216654110276}
-  m_Layer: 10
+  m_Layer: 15
   m_Name: Item_Parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}

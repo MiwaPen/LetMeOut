@@ -1,33 +1,53 @@
-using Inventory.Enums;
+using TabsMenu;
+using TabsMenu.Enums;
 using UnityEngine;
 
 namespace Inventory.UI
 {
-    public class InventoryDialog : Dialog
+    public class InventoryTab : BaseMenuTab
     {
-        [SerializeField] private Camera _itemInspectionCamera;
         [SerializeField] private UiItemInspector _uiItemInspector;
         [SerializeField] private ItemCellsController _itemCellsController;
         [SerializeField] private ItemControlButtonsController _itemControlButtonsController;
-        private InventoryDialogMode _mode;
+        private TabsMenuScreenMode _mode;
         
-        public Dialog Initialize(InventoryDialogMode mode)
+        public override BaseMenuTab Initialize(TabsMenuScreenMode mode)
         {
             _mode = mode;
-            
-            _itemCellsController.OnSelectedCellChanged += OnSelectedCellChanged;
+            return this;
+        }
 
+        public override void Show()
+        {
+            AddListeners();
+            
             _itemCellsController.Initialize();
             _itemControlButtonsController.Initialize(_mode);
             _itemControlButtonsController.SetCellView(_itemCellsController.CurrentSelectedCell);
             
+            gameObject.SetActive(true);
+        }
+
+        public override void Hide()
+        {
+            RemoveListeners();
+            gameObject.SetActive(false);
+        }
+     
+        private void AddListeners()
+        {
+            _itemCellsController.OnSelectedCellChanged += OnSelectedCellChanged;
             Locator.Instance.InventoryController.OnItemRemoved += OnInventoryChanged;
             Locator.Instance.InventoryController.OnItemAdded += OnInventoryChanged;
-            
-            Locator.Instance.CameraController.AddOverlayCameraToStack(_itemInspectionCamera);
-            return this;
         }
         
+        private void RemoveListeners()
+        {
+            _itemCellsController.OnSelectedCellChanged -= OnSelectedCellChanged;
+            Locator.Instance.InventoryController.OnItemRemoved -= OnInventoryChanged;
+            Locator.Instance.InventoryController.OnItemAdded -= OnInventoryChanged;
+        }
+
         private void OnDisable()
         {
             _itemCellsController.OnSelectedCellChanged -= OnSelectedCellChanged;
@@ -58,12 +78,6 @@ namespace Inventory.UI
             {
                 _uiItemInspector.ClearInspection();
             }
-        }
-        
-        public override void Hide()
-        {
-            Locator.Instance.CameraController.RemoveOverlayCameraFromStack(_itemInspectionCamera);
-            base.Hide();
         }
     }
 }
